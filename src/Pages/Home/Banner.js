@@ -9,7 +9,7 @@ const Banner = () => {
     <img src={chair} class="max-w-sm rounded-lg shadow-2xl" />
     <div>
       <h1 class="text-5xl font-bold text-black">Your New Smile Starts Here</h1>
-      <p class="py-6 text-black">The crew here at Making You Smile doctors portal Dental Studio has the knowledge, experience and technology to deliver the smile you’ve always wanted.</p>
+      <p class="py-6 text-accent">The crew here at Making You Smile doctors portal Dental Studio has the knowledge, experience and technology to deliver the smile you’ve always wanted.</p>
       <button class="btn btn-primary text-white font-bold bg-gradient-to-r from-secondary to-primary">Get Started</button>
     </div>
   </div>
