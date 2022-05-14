@@ -3,7 +3,7 @@ import React from 'react';
 const Review = ({review}) => {
   return (
     <section>
-      <div className="card lg:max-w-lg bg-base-100 shadow-xl">
+      <div className="card lg:max-w-lg bg-base-100 shadow-2xl">
         <div className="card-body">
         <p className='text-accent'>{review.review}</p>
         <div className="flex items-center">
