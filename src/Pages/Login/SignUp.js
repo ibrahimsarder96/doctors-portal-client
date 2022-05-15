@@ -1,49 +1,70 @@
 import React from 'react';
-import {useSignInWithEmailAndPassword, useSignInWithGoogle} from 'react-firebase-hooks/auth'
-import auth from '../../../firebase.init';
-import { useForm } from "react-hook-form";
-import Loading from '../../Shared/Loading';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-// import { EmailAuthCredential } from 'firebase/auth';
+import { useCreateUserWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import auth from '../../firebase.init';
+import Loading from '../Shared/Loading';
+import { useUpdateProfile } from 'react-firebase-hooks/auth';
 
-const Login = () => {
+const SignUP = () => {
   const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
   const { register, formState: { errors }, handleSubmit } = useForm();
   const [
-    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
     user,
     loading,
     error,
-  ] = useSignInWithEmailAndPassword(auth);
-  const location = useLocation();
+  ] = useCreateUserWithEmailAndPassword(auth);
+  const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+
   const navigate = useNavigate();
-  let from = location.state?.from?.pathname || "/";
 
-
-  if(loading || gLoading){
+  if(loading || gLoading || updating){
     return <Loading></Loading>
   }
 
   let signInError;
-  if(error || gError){
-    signInError = <p className='text-red-500'><small>{error?.message || gError?.message}</small></p>
+  if(error || gError || updateError){
+    signInError = <p className='text-red-500'><small>{error?.message || gError?.message || updateError?.message}</small></p>
   }
   if(user || gUser){
-    navigate(from, { replace: true });
+    console.log(user)
   }
 
-  const onSubmit = data => {
+  const onSubmit = async(data) => {
     console.log(data);
-    signInWithEmailAndPassword(data.email, data.password)
+  await  createUserWithEmailAndPassword(data.email, data.password )
+  await updateProfile({ displayName: data.name });
+  console.log(updateProfile)
+  navigate('/appointment')
   }
-
   return (
     <div className="card  h-screen justify-center items-center">
     <div className='card w-100 bg-base-100 shadow-2xl'>
     <div className="card-body">
-    <h2 className="text-center text-accent text-2xl font-bold">Login</h2>
+    <h2 className="text-center text-accent text-2xl font-bold">Sign UP</h2>
 
     <form onSubmit={handleSubmit(onSubmit)}>
+    <div className="form-control w-full max-w-xs">
+      <label className="label">
+        <span className="label-text text-accent text-xl">Name</span>
+      </label>
+      <input 
+      type="text" 
+      placeholder="Name" 
+      className="input input-bordered w-full max-w-xs border-accent text-accent text-xl" 
+      {...register("name", {
+        required: {
+          value: true,
+          message: 'Name is Required'
+        }
+      }
+      )}
+      />
+      <label className="label">
+      {errors.name?.type === 'required' && <span className="label-text-alt text-red-500">{errors.name.message}</span>}
+      </label>
+    </div>
     <div className="form-control w-full max-w-xs">
       <label className="label">
         <span className="label-text text-accent text-xl">Email</span>
@@ -95,9 +116,9 @@ const Login = () => {
       </label>
     </div>    
     {signInError}
-      <input className='btn w-full max-w-xs bg-accent text-white' type="submit" value="Login" />
+      <input className='btn w-full max-w-xs bg-accent text-white' type="submit" value="Signup" />
     </form>
-    <p className='text-accent'>New Doctors Portal? <Link to="/signup" className='text-primary'>Create New Account</Link></p>
+    <p className='text-accent'>New Doctors Portal? <Link to="/login" className='text-primary'>Please Login</Link></p>
     <div className="divider text-accent text-xl">OR</div>
     <button 
     className="btn btn-outline uppercase text-xl border-accent text-accent"
@@ -109,4 +130,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUP;
